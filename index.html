@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+
+<script id="roomV-shader" type="x-shader/x-vertex">
+attribute vec4 vPosition;
+attribute vec4 vNormal;
+
+varying vec3 light, halfWay, normal;
+
+uniform mat4 modelViewMatrix, projectionMatrix, transformMatrix;
+uniform vec4 lightPosition;
+uniform vec3 eyePos;
+
+void main()
+{
+  vec4 pos = transformMatrix * vPosition;
+  vec3 L = normalize(lightPosition - pos).xyz;
+  light = L;
+  vec3 E = normalize( eyePos );
+  vec3 H = normalize( L + E );
+  halfWay = H;
+  // Transform vertex normal into world coordinates
+  vec3 N = normalize(transformMatrix * vNormal).xyz;
+  normal = N;
+  gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+}
+</script>
+<script id="roomF-shader" type="x-shader/x-fragment">
+precision mediump float;
+varying vec3 light, halfWay, normal;
+
+uniform float shininess;
+uniform vec4 ambientProduct, diffuseProduct, specularProduct;
+
+void main()
+{
+  vec4 ambient = ambientProduct;
+  float Kd = max( dot(light, normal), 0.0 );
+  vec4  diffuse = Kd * diffuseProduct;
+
+  float Ks = pow( max(dot(normal, halfWay), 0.0), shininess );
+  vec4  specular = Ks * specularProduct;
+  if( dot(light, normal) < 0.0 ) {
+      specular = vec4(0.0, 0.0, 0.0, 1.0);
+  }
+  if (gl_FrontFacing) {
+      gl_FragColor = vec4(0,1,1,1);
+  } else {
+      gl_FragColor = ambient + diffuse + specular;
+  }
+}
+</script>
+
+<script id="sphere1V-shader" type="x-shader/x-vertex">
+attribute vec4 vPosition;
+attribute vec4 vNormal;
+
+varying vec3 light, halfWay, normal;
+varying float s, t;
+
+uniform mat4 modelViewMatrix, projectionMatrix, transformMatrix;
+uniform vec4 lightPosition;
+uniform vec3 eyePos;
+
+void main()
+{
+  float pi = acos(0.0);
+  // use the parametric equation to map texture coordinates instead of calculating in the Javascript
+  s = 0.5*acos(vPosition.x)/pi;
+  t = 0.5*asin(vPosition.y/sqrt(1.0-vPosition.x*vPosition.x))/pi;
+
+  vec4 pos = transformMatrix * vPosition;
+  vec3 L = normalize(lightPosition - pos).xyz;
+  light = L;
+  vec3 E = normalize( eyePos );
+  vec3 H = normalize( L + E );
+  halfWay = H;
+  // Transform vertex normal into eye coordinates
+  vec3 N = normalize(transformMatrix*vNormal).xyz;
+  normal = N;
+  gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+}
+</script>
+<script id="sphere1F-shader" type="x-shader/x-fragment">
+precision mediump float;
+varying vec3 light, halfWay, normal;
+varying float s, t;
+
+uniform sampler2D texture;
+uniform float shininess;
+uniform vec4 ambientProduct, diffuseProduct, specularProduct;
+
+void main()
+{
+  vec4 ambient = ambientProduct;
+  float Kd = max( dot(light, normal), 0.0 );
+  vec4  diffuse = Kd * diffuseProduct;
+
+  float Ks = pow( max(dot(normal, halfWay), 0.0), shininess );
+  vec4  specular = Ks * specularProduct;
+  if( dot(light, normal) < 0.0 ) {
+      specular = vec4(0.0, 0.0, 0.0, 1.0);
+  }
+  if (gl_FrontFacing) {
+      gl_FragColor = vec4(0,1,1,1);
+  } else {
+      gl_FragColor = (ambient + diffuse + specular) * (texture2D( texture, vec2(s, t)));
+  }
+}
+</script>
+
+<script id="sphere2V-shader" type="x-shader/x-vertex">
+attribute vec4 vPosition;
+attribute vec4 vNormal;
+
+varying vec3 light, halfWay, normal;
+varying float s, t;
+
+uniform mat4 modelViewMatrix, projectionMatrix, transformMatrix;
+uniform vec4 lightPosition;
+uniform vec3 eyePos;
+
+void main()
+{
+  float pi = acos(0.0);
+  // use the parametric equation to map texture coordinates instead of calculating in the Javascript
+  s = 0.5*acos(vPosition.x)/pi;
+  t = 0.5*asin(vPosition.y/sqrt(1.0-vPosition.x*vPosition.x))/pi;
+
+  vec4 pos = transformMatrix * vPosition;
+  vec3 L = normalize(lightPosition - pos).xyz;
+  light = L;
+  vec3 E = normalize( eyePos );
+  vec3 H = normalize( L + E );
+  halfWay = H;
+  // Transform vertex normal into eye coordinates
+  vec3 N = normalize(transformMatrix*vNormal).xyz;
+  normal = N;
+  gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+}
+</script>
+<script id="sphere2F-shader" type="x-shader/x-fragment">
+precision mediump float;
+varying vec3 light, halfWay, normal;
+varying float s, t;
+
+uniform sampler2D texture;
+uniform float shininess;
+uniform vec4 ambientProduct, diffuseProduct, specularProduct;
+
+void main()
+{
+  vec4 ambient = ambientProduct;
+  float Kd = max( dot(light, normal), 0.0 );
+  vec4  diffuse = Kd * diffuseProduct;
+
+  float Ks = pow( max(dot(normal, halfWay), 0.0), shininess );
+  vec4  specular = Ks * specularProduct;
+  if( dot(light, normal) < 0.0 ) {
+      specular = vec4(0.0, 0.0, 0.0, 1.0);
+  }
+  if (gl_FrontFacing) {
+      gl_FragColor = vec4(0,1,1,1);
+  } else {
+      gl_FragColor = (ambient + diffuse + specular) * (texture2D( texture, vec2(s, t)));
+  }
+}
+</script>
+
+<script id="sphere3V-shader" type="x-shader/x-vertex">
+attribute vec4 vPosition;
+attribute vec4 vNormal;
+
+varying vec3 light, halfWay, normal;
+varying float s, t;
+
+uniform mat4 modelViewMatrix, projectionMatrix, transformMatrix;
+uniform vec4 lightPosition;
+uniform vec3 eyePos;
+
+void main()
+{
+  float pi = acos(0.0);
+  // use the parametric equation to map texture coordinates instead of calculating in the Javascript
+  s = 0.5*acos(vPosition.x)/pi;
+  t = 0.5*asin(vPosition.y/sqrt(1.0-vPosition.x*vPosition.x))/pi;
+
+  vec4 pos = transformMatrix * vPosition;
+  vec3 L = normalize(lightPosition - pos).xyz;
+  light = L;
+  vec3 E = normalize( eyePos );
+  vec3 H = normalize( L + E );
+  halfWay = H;
+  // Transform vertex normal into eye coordinates
+  vec3 N = normalize(transformMatrix*vNormal).xyz;
+  normal = N;
+  gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+}
+</script>
+<script id="sphere3F-shader" type="x-shader/x-fragment">
+precision mediump float;
+varying vec3 light, halfWay, normal;
+varying float s, t;
+
+uniform sampler2D texture;
+uniform float shininess;
+uniform vec4 ambientProduct, diffuseProduct, specularProduct;
+
+void main()
+{
+  vec4 ambient = ambientProduct;
+  float Kd = max( dot(light, normal), 0.0 );
+  vec4  diffuse = Kd * diffuseProduct;
+
+  float Ks = pow( max(dot(normal, halfWay), 0.0), shininess );
+  vec4  specular = Ks * specularProduct;
+  if( dot(light, normal) < 0.0 ) {
+      specular = vec4(0.0, 0.0, 0.0, 1.0);
+  }
+  if (gl_FrontFacing) {
+      gl_FragColor = vec4(0,1,1,1);
+  } else {
+      gl_FragColor = (ambient + diffuse + specular) * (texture2D( texture, vec2(s, t)));
+  }
+}
+</script>
+
+<script id="sphere4V-shader" type="x-shader/x-vertex">
+attribute vec4 vPosition;
+attribute vec4 vNormal;
+
+varying vec3 light, halfWay, normal;
+varying float s, t;
+
+uniform mat4 modelViewMatrix, projectionMatrix, transformMatrix;
+uniform vec4 lightPosition;
+uniform vec3 eyePos;
+
+void main()
+{
+  float pi = acos(0.0);
+  // use the parametric equation to map texture coordinates instead of calculating in the Javascript
+  s = 0.5*acos(vPosition.x)/pi;
+  t = 0.5*asin(vPosition.y/sqrt(1.0-vPosition.x*vPosition.x))/pi;
+
+  vec4 pos = transformMatrix * vPosition;
+  vec3 L = normalize(lightPosition - pos).xyz;
+  light = L;
+  vec3 E = normalize( eyePos );
+  vec3 H = normalize( L + E );
+  halfWay = H;
+  // Transform vertex normal into eye coordinates
+  vec3 N = normalize(transformMatrix*vNormal).xyz;
+  normal = N;
+  gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+}
+</script>
+<script id="sphere4F-shader" type="x-shader/x-fragment">
+precision mediump float;
+varying vec3 light, halfWay, normal;
+varying float s, t;
+
+uniform sampler2D texture;
+uniform float shininess;
+uniform vec4 ambientProduct, diffuseProduct, specularProduct;
+
+void main()
+{
+  vec4 ambient = ambientProduct;
+  float Kd = max( dot(light, normal), 0.0 );
+  vec4  diffuse = Kd * diffuseProduct;
+
+  float Ks = pow( max(dot(normal, halfWay), 0.0), shininess );
+  vec4  specular = Ks * specularProduct;
+  if( dot(light, normal) < 0.0 ) {
+      specular = vec4(0.0, 0.0, 0.0, 1.0);
+  }
+  if (gl_FrontFacing) {
+      gl_FragColor = vec4(0,1,1,1);
+  } else {
+      gl_FragColor = (ambient + diffuse + specular) * (texture2D( texture, vec2(s, t)));
+  }
+}
+</script>
+
+<script id="lightSphere-vShader" type="x-shader/x-vertex">
+attribute vec4 vPosition;
+
+varying vec3 light, halfWay, normal;
+
+uniform mat4 modelViewMatrix, projectionMatrix, transformMatrix;
+uniform vec4 lightPosition;
+uniform vec3 eyePos;
+
+void main()
+{
+  gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+}
+</script>
+<script id="lightSphere-fShader" type="x-shader/x-fragment">
+precision mediump float;
+uniform vec4 fColor;
+
+void main()
+{
+    gl_FragColor = fColor;
+}
+</script>
+<script type="text/javascript" src="../Common/webgl-utils.js"></script>
+<script type="text/javascript" src="../Common/initShaders.js"></script>
+<script type="text/javascript" src="../Common/MVnew.js"></script>
+<script type="text/javascript" src="Final.js"></script>
+
+<body>
+<h2>WebGL Interactive Lighting</h2>
+<canvas id="gl-canvas" width="1280" height="720">
+Oops ... your browser doesn't support the HTML5 canvas element
+</canvas>
+<p>CAMERA -- Strafe Camera: WASD | Orbit left/right: Left & Right arrows | Look up/down: Up & Down arrows | Strafe up/down: Space and C</p>
+<p>LIGHTING (COLOR) -- Intensity: 1-lower 2-higher | Red Component: 3-lower 4-higher | Green Component: 5-lower 6-higher | Blue Component: 7-lower 8-higher</p>
+<p>LIGHTING (POSITION) -- Strafe X: H-left K-right | Strafe Y: U-higher J-lower | Strafe Z: O-forward L-backwards</p>
+<img id = "Tex" src = "2k_mercury.jpg" crossorigin="" width="0" height="0"></img>
+<br>
+<p id="lightPos"></p>
+<p id="lValues"></p>
+<br>
+</body>
+</html>
